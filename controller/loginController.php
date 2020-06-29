@@ -68,29 +68,3 @@ function logout() {
 
   header( 'location: index.php' );
 }
-
-  $error_msg      = "Email ou mot de passe incorrect";
-
-  if( $userData && sizeof( $userData ) != 0 ):
-    if( $user->getPassword() == $userData['password'] ):
-
-      // Set session
-      $_SESSION['user_id'] = $userData['id'];
-
-      header( 'location: index.php ');
-    endif;
-  endif;
-
-  require('view/auth/loginView.php');
-}
-
-/****************************
-* ----- LOGOUT FUNCTION -----
-****************************/
-
-function logout() {
-  $_SESSION = array();
-  session_destroy();
-
-  header( 'location: index.php' );
-}
