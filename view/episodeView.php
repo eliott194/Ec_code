@@ -1,4 +1,8 @@
-<?php ob_start(); ?>
+<?php ob_start();
+
+$files = getEpisode($_GET['episode']);
+
+?>
 
 <div class="row">
     <div class="col-md-4 offset-md-8">
@@ -14,20 +18,19 @@
 </div>
 
 <div class="media-list">
-    <?php foreach( $medias as $media ): ?>
-        <a class="item" href="index.php?media=<?= $media['id']; ?>">
+    <?php foreach( $files as $file ): ?>
+        <a class="item" href="index.php?episode=<?= $file['id']; ?>">
             <div class="video">
                 <div>
                     <iframe allowfullscreen="" frameborder="0"
-                            src="<?= $media['trailer_url']; ?>" ></iframe>
+                            src="<?= $file['stream']; ?>" ></iframe>
                 </div>
             </div>
-            <div class="title"><?= $media['title']; ?></div>
-            <div class="date"> Date de sortie : <?= $media['release_date']; ?></div>
+            <div class="title"><?= $file['name']; ?></div>
+            <div class="date"><?= $file['title']; ?></div>
         </a>
     <?php endforeach; ?>
 </div>
-
 
 <?php $content = ob_get_clean(); ?>
 
