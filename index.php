@@ -4,12 +4,13 @@ require_once( 'controller/homeController.php' );
 require_once( 'controller/loginController.php' );
 require_once( 'controller/signupController.php' );
 require_once( 'controller/mediaController.php' );
+require_once ( 'controller/contactController.php');
 
 /**************************
 * ----- HANDLE ACTION -----
 ***************************/
 
-if ( isset( $_GET['action'] ) ):
+if ( isset( $_GET['action'] ) ) {
 
   switch( $_GET['action']):
 
@@ -21,8 +22,8 @@ if ( isset( $_GET['action'] ) ):
     break;
 
     case 'signup':
-
-      signupPage();
+      if ( !empty( $_POST ) ) signup( $_POST );
+       else signupPage();
 
     break;
 
@@ -32,9 +33,35 @@ if ( isset( $_GET['action'] ) ):
 
     break;
 
+    case 'contact' :
+
+      contact();
+
+    break;
+
+    case 'media' :
+
+      mediaPage();
+
+    break;
+
   endswitch;
 
-else:
+}
+
+elseif (isset( $_GET['media'])) {
+
+  mediaSelecte();
+
+}
+
+//New case for episode
+elseif (isset($_GET['episode'])) {
+  
+  episodePage();
+}
+
+else {
 
   $user_id = isset( $_SESSION['user_id'] ) ? $_SESSION['user_id'] : false;
 
@@ -44,4 +71,4 @@ else:
     homePage();
   endif;
 
-endif;
+}
