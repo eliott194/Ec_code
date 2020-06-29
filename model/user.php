@@ -13,7 +13,7 @@ class User {
     if( $user != null ):
       $this->setId( isset( $user->id ) ? $user->id : null );
       $this->setEmail( $user->email );
-      $this->setPassword( $user->password, isset( $user->password_confirm ) ? $user->password_confirm : false );
+      $this->setPassword( check_password($user->password), isset( $user->password_confirm ) ? $user->password_confirm : false );
     endif;
   }
 
@@ -41,7 +41,8 @@ class User {
       throw new Exception( 'Vos mots de passes sont différents' );
     endif;
 
-    $this->password = $password;
+    // function to hide/hash the password 
+    $this->password = hash('sha256', $password);
   }
 
   /***************************
@@ -66,7 +67,6 @@ class User {
 
   public function createUser() {
 
-    // Open database connection
     $db   = init_db();
 
     // Check if email already exist
@@ -84,7 +84,6 @@ class User {
       'password'  => $this->getPassword()
     ));
 
-    // Close databse connection
     $db = null;
 
   }
@@ -95,13 +94,13 @@ class User {
 
   public static function getUserById( $id ) {
 
-    // Open database connection
+    
     $db   = init_db();
 
     $req  = $db->prepare( "SELECT * FROM user WHERE id = ?" );
     $req->execute( array( $id ));
 
-    // Close databse connection
+    
     $db   = null;
 
     return $req->fetch();
@@ -113,16 +112,44 @@ class User {
 
   public function getUserByEmail() {
 
-    // Open database connection
+    
     $db   = init_db();
 
     $req  = $db->prepare( "SELECT * FROM user WHERE email = ?" );
     $req->execute( array( $this->getEmail() ));
 
-    // Close databse connection
+    
     $db   = null;
 
     return $req->fetch();
   }
 
 }
+
+  /***************************************
+  * ------- REGEX ON PASSWORD SIGN UP -------
+  ****************************************/
+  
+function check_password($password) {
+
+    $error = '';
+
+    if( strlen($password ) < 8 ) $error .="Password too short !</br>";
+
+    if( strlen($password ) > 20 ) $error.= "Password too long !</br>";
+
+    if( !preg_match("#[0-9]+#", $password ) ) $error.= "Password must include at least one number !</br>";
+
+    if( !preg_match("#[a-z]+#", $password ) ) $error.= "Password must include at least one letter !</br>";
+
+    if( !preg_match("#[A-Z]+#", $password ) ) $error.= "Password must include at least one CAPS !</br>" ;
+
+    if( !preg_match("#\W+#", $password ) ) $error.="Password must include at least one symbol !";
+    
+    if ($error != '') {
+      throw new Exception($error);
+    }
+    else {
+     return true;
+    }
+  }
